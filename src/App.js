@@ -1,54 +1,78 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+import { useRequestGet } from "./hooks/useRequestGet";
+
+import { FormAdd } from "./components/form-add";
+import { FormDelete } from "./components/form-delete";
+import { FormUpdate } from "./components/form-update";
 
 export const App = () => {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
+  const [isRefreshTask, setIsRefreshTask] = useState(false);
+  const [sortAsc, setSortAsc] = useState(false);
+  const [taskFilter, setTaskFilter] = useState("");
 
-  useEffect(() => {
-    setIsLoading(true);
-
-    fetch("https://jsonplaceholder.typicode.com/todos")
-      .then((loadedData) => loadedData.json())
-      .then((loadedProducts) => {
-        setProducts(loadedProducts);
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
-
-  const requestAddPost = () => {
-    setIsCreating(true);
-
-    fetch("https://jsonplaceholder.typicode.com/todos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json;charset=utf-8" },
-      body: JSON.stringify({
-        title: "foo",
-        body: "bar",
-        userId: 1,
-      }),
-    })
-      .then((rawResponse) => rawResponse.json())
-      .then((response) => {
-        setProducts([...products, response]);
-        console.log("Статья добавлена, ответ сервера: ", response);
-      })
-      .finally(() => setIsCreating(false));
+  const refreshTask = () => {
+    setIsRefreshTask(!isRefreshTask);
   };
+
+  const { isLoading, tasks } = useRequestGet(isRefreshTask);
 
   return (
     <div>
+      <FormAdd refreshTask={refreshTask} />
+      <FormDelete refreshTask={refreshTask} />
+      <FormUpdate refreshTask={refreshTask} />
+
+      <div>
+        <label>
+          Фильтр задач:
+          <input
+            type="text"
+            value={taskFilter}
+            onChange={(e) => setTaskFilter(e.target.value)}
+          />
+        </label>
+      </div>
+      <button
+        onClick={() => {
+          setSortAsc(!sortAsc);
+        }}
+      >
+        Сортировка
+      </button>
       {isLoading ? (
-        <div className="loader"></div>
+        <div className="loader">Loading...</div>
+      ) : sortAsc ? (
+        [...tasks]
+          .sort((a, b) => (a.name > b.name ? 1 : -1))
+          .filter((task) => task.name.includes(taskFilter))
+          .map(({ id, name }) => (
+            <div className="todoitem" key={id}>
+              {id} - {name}
+            </div>
+          ))
       ) : (
-        products.map(({ id, title }) => (
-          <div className="todoitem" key={id}>
-            {id} - {title}
-          </div>
-        ))
+        tasks
+          .filter((task) => task.name.includes(taskFilter))
+          .map(({ id, name }) => (
+            <div className="todoitem" key={id}>
+              {id} - {name}
+            </div>
+          ))
       )}
     </div>
   );
 };
 
 export default App;
+
+/*  
+products.map(({ id, name }) => (
+          <div className="todoitem" key={id}>
+            {id} - {name}
+          </div>
+        ))
+
+        
+      <button onClick={sortAscending}>Сортировка</button>
+*/
