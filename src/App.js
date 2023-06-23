@@ -15,13 +15,13 @@ export const App = () => {
     setIsRefreshTask(!isRefreshTask);
   };
 
-  const { isLoading, tasks } = useRequestGet(isRefreshTask);
+  const { isLoading, tasks } = useRequestGet();
 
   return (
     <div>
-      <FormAdd refreshTask={refreshTask} />
-      <FormDelete refreshTask={refreshTask} />
-      <FormUpdate refreshTask={refreshTask} />
+      <FormAdd />
+      <FormDelete />
+      <FormUpdate />
 
       <div>
         <label>
@@ -43,18 +43,18 @@ export const App = () => {
       {isLoading ? (
         <div className="loader">Loading...</div>
       ) : sortAsc ? (
-        [...tasks]
+        [...Object.entries(tasks)]
           .sort((a, b) => (a.name > b.name ? 1 : -1))
-          .filter((task) => task.name.includes(taskFilter))
-          .map(({ id, name }) => (
+          .filter(([id, { name }]) => name.includes(taskFilter))
+          .map(([id, { name }]) => (
             <div className="todoitem" key={id}>
               {id} - {name}
             </div>
           ))
       ) : (
-        tasks
-          .filter((task) => task.name.includes(taskFilter))
-          .map(({ id, name }) => (
+        Object.entries(tasks)
+          .filter(([id, { name }]) => name.includes(taskFilter))
+          .map(([id, { name }]) => (
             <div className="todoitem" key={id}>
               {id} - {name}
             </div>

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useRequestAdd } from "../hooks/useRequestAdd";
 
-export function FormAdd({ refreshTask }) {
+export function FormAdd() {
   const [name, setName] = useState("");
 
-  const { isCreating, requestAdd } = useRequestAdd(refreshTask, name);
+  const { isCreating, requestAdd } = useRequestAdd(name);
 
   return (
     <form>

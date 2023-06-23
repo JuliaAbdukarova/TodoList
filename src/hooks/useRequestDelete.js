@@ -1,17 +1,17 @@
 import { useState } from "react";
+import { ref, remove } from "firebase/database";
+import { db } from "../firebase";
 
-export const useRequestDelete = (refreshTask) => {
+export const useRequestDelete = () => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const requestDelete = (taskId) => {
     setIsDeleting(true);
 
-    fetch(`http://localhost:3005/tasks/${taskId}`, {
-      method: "DELETE",
-    })
-      .then((rawResponse) => rawResponse.json())
+    const deleteRef = ref(db, `tasks/${taskId}`);
+
+    remove(deleteRef)
       .then((response) => {
-        refreshTask();
         console.log("Задача удалена, ответ сервера: ", response);
       })
       .finally(() => setIsDeleting(false));

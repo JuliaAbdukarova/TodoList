@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useRequestDelete } from "../hooks/useRequestDelete";
 
-export function FormDelete({ refreshTask }) {
+export function FormDelete() {
   const [taskId, setTaskId] = useState("");
 
-  const { isDeleting, requestDelete } = useRequestDelete(refreshTask);
+  const { isDeleting, requestDelete } = useRequestDelete();
 
   const handleDelete = () => {
     requestDelete(taskId);
