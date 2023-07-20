@@ -20,4 +20,71 @@ code {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
   text-align: left;
   text-indent: 30mm;
+  border: solid;
+  margin: 2px;
+}
+
+.add {
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.column {
+  width: 50%;
+}
+
+.wrapper {
+  background-color: whitesmoke;
+  list-style-type: none;
+  padding: 0;
+  border-radius: 3px;
+}
+.form-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5em;
+}
+.form-row > label {
+  padding: 0.5em 1em 0.5em 0;
+  flex: 1;
+}
+.form-row > input {
+  flex: 2;
+}
+.form-row > input,
+.form-row > button {
+  padding: 0.5em;
+}
+.form-row > button {
+  background: gray;
+  color: white;
+  border: 0;
+}
+@media screen and (min-width: 768px) {
+  .form-row > input {
+    flex: 3;
+  }
+}
+@media screen and (min-width: 992px) {
+  .form-row > input {
+    flex: 4;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .form-row > input {
+    flex: 5;
+  }
+}
+
+.center-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
 }

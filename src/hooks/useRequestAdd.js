@@ -1,6 +1,13 @@
 import { useState } from "react";
 
-export const useRequestAdd = (refreshTask, name) => {
+export const useRequestAdd = (
+  refreshTask,
+  name,
+  date,
+  time,
+  location,
+  priority
+) => {
   const [isCreating, setIsCreating] = useState(false);
 
   const requestAdd = () => {
@@ -11,6 +18,10 @@ export const useRequestAdd = (refreshTask, name) => {
       headers: { "Content-Type": "application/json;charset=utf-8" },
       body: JSON.stringify({
         name: name,
+        date: date,
+        time: time,
+        location: location,
+        priority: priority,
       }),
     })
       .then((rawResponse) => rawResponse.json())
