@@ -1,22 +1,20 @@
-import {
-  ItemGeneralInfo,
-  ItemDateTimeInfo,
-  ItemLocationInfo,
-} from "./components";
+import { useDispatch, useSelector } from "react-redux";
 
-import { useRequestDelete } from "../../hooks/useRequestDelete";
+import { deleteItemsAsync } from "../../actions";
 
-import { useContext } from "react";
-import { ItemContext } from "../../context";
+export const Item = ({ id, name, location, refreshTask }) => {
+  const dispatch = useDispatch();
 
-export const Item = (props) => {
-  const { isDeleting, requestDelete } = useRequestDelete(props.refreshTask);
-  const { id } = useContext(ItemContext);
+  const requestDelete = (id) => {
+    dispatch(deleteItemsAsync(id));
+    refreshTask();
+  };
+
   return (
-    <li className="todoitem">
-      <ItemGeneralInfo />
-      <ItemDateTimeInfo />
-      <ItemLocationInfo />
+    <div className="todoitem">
+      <label>Номер: {id} </label>
+      <label>Название: {name} </label>
+      <label>Локация: {location} </label>
       <button
         onClick={(event) => {
           requestDelete(id);
@@ -25,6 +23,6 @@ export const Item = (props) => {
       >
         Удалить
       </button>
-    </li>
+    </div>
   );
 };

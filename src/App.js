@@ -1,17 +1,27 @@
-import { useState, useContext } from "react";
+import { useState, useEffect } from "react";
 
-import { useRequestGet } from "./hooks/useRequestGet";
+import { useDispatch, useSelector } from "react-redux";
+
+import { readItemsAsync } from "./actions";
+import { selectItems, selectLoading } from "./selectors";
 
 import { FormAdd } from "./components/form-add";
 import { Item } from "./components/item/item";
-
-import { ItemContext } from "./context";
 
 export const App = () => {
   const [isRefreshTask, setIsRefreshTask] = useState(false);
   const [sortAsc, setSortAsc] = useState(false);
   const [taskFilter, setTaskFilter] = useState("");
   const [isAdditionMode, setIsAdditionMode] = useState(false);
+
+  const dispatch = useDispatch();
+
+  let tasks = useSelector(selectItems);
+  let isLoading = useSelector(selectLoading);
+
+  useEffect(() => {
+    dispatch(readItemsAsync(isRefreshTask));
+  }, [sortAsc, taskFilter, isRefreshTask]);
 
   const refreshTask = () => {
     setIsRefreshTask(!isRefreshTask);
@@ -21,7 +31,7 @@ export const App = () => {
     setIsAdditionMode(false);
   };
 
-  const { isLoading, tasks } = useRequestGet(isRefreshTask);
+  readItemsAsync(isRefreshTask);
 
   return (
     <div>
@@ -54,7 +64,6 @@ export const App = () => {
           />
         </label>
       </div>
-
       {isLoading ? (
         <div className="loader">Loading...</div>
       ) : sortAsc ? (
@@ -62,17 +71,23 @@ export const App = () => {
           .sort((a, b) => (a.name > b.name ? 1 : -1))
           .filter((task) => task.name.includes(taskFilter))
           .map((task) => (
-            <ItemContext.Provider value={task}>
-              <Item refreshTask={refreshTask} />
-            </ItemContext.Provider>
+            <Item
+              id={task.id}
+              name={task.name}
+              location={task.location}
+              refreshTask={refreshTask}
+            />
           ))
       ) : (
         tasks
           .filter((task) => task.name.includes(taskFilter))
           .map((task) => (
-            <ItemContext.Provider value={task}>
-              <Item refreshTask={refreshTask} />
-            </ItemContext.Provider>
+            <Item
+              id={task.id}
+              name={task.name}
+              location={task.location}
+              refreshTask={refreshTask}
+            />
           ))
       )}
     </div>
@@ -81,13 +96,23 @@ export const App = () => {
 
 export default App;
 
-/*
-<div className="todoitem" key={id}>
-              {id} - {name}
-            </div>
+{
+  /*
+  {isLoading ? (
+        <div className="loader">Loading...</div>
+      ) : sortAsc ? (
+        [...tasks]
+          .sort((a, b) => (a.name > b.name ? 1 : -1))
+          .filter((task) => task.name.includes(taskFilter))
+          .map((task) => (
+            <Item id={task.id} name={task.name} refreshTask={refreshTask} />
           ))
-
-<FormDelete refreshTask={refreshTask} />
-<FormUpdate refreshTask={refreshTask} />
-
+      ) : (
+        tasks
+          .filter((task) => task.name.includes(taskFilter))
+          .map((task) => (
+            <Item id={task.id} name={task.name} refreshTask={refreshTask} />
+          ))
+      )}
 */
+}
